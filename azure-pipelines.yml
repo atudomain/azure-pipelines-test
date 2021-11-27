@@ -1,0 +1,54 @@
+# you can ommit stages definition when there is only one stage
+stages:
+- stage: A
+  # you can ommit jobs definition when there is only one stage
+  jobs:
+  - job: myJob
+    timeoutInMinutes: 10
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - bash: echo "Hello world A"
+- stage: B
+  jobs:
+  - job: myJob
+    timeoutInMinutes: 10
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - bash: echo "Hello world B"
+- stage: Start Serious
+  jobs:
+  - job: integrationTests
+    timeoutInMinutes: 10
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: DockerCompose@0
+      displayName: Run services
+      inputs:
+        action: Run services
+        dockerComposeFile: docker-compose.yml
+        projectName: integration-tests
+        qualifyImageNames: true
+        buildImages: true
+        abortOnContainerExit: true
+        detached: false
+    - task: Bash@3
+      displayName: Test loopback endpoint
+      inputs:
+        targetType: inline
+        script: |
+          curl http://127.0.0.1 || true
+    - task: Bash@3
+      displayName: Update /etc/hosts
+      inputs:
+        targetType: inline
+        script: |
+          echo "127.0.0.1 example.local" >> /etc/hosts
+    - task: Bash@3
+      displayName: Use updated host entry 
+      inputs:
+        targetType: inline
+        script: |
+          curl http://example.local
