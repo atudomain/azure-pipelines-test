@@ -17,7 +17,7 @@ stages:
       vmImage: 'ubuntu-latest'
     steps:
     - bash: echo "Hello world B"
-- stage: Start Serious
+- stage: startSerious
   jobs:
   - job: integrationTests
     timeoutInMinutes: 10
