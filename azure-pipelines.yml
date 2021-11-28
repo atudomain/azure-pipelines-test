@@ -1,7 +1,7 @@
 # you can ommit stages definition when there is only one stage
 stages:
 - stage: A
-  # you can ommit jobs definition when there is only one stage
+  # you can ommit jobs definition when there is only one job
   jobs:
   - job: myJob
     timeoutInMinutes: 10
